@@ -7,20 +7,23 @@ import (
 )
 
 //create
-func CreateTable(engine *xorm.Engine, tb interface{}) {
+func CreateTable(engine *xorm.Engine, tb interface{}) error {
 	ts, err := engine.IsTableExist(tb)
 	if err != nil {
 		log.Println(err)
-	} else if ts {
-		log.Println("Bang da ton tai")
-	} else {
-		err := engine.Sync2(tb)
-		if err != nil {
-			log.Println(err)
-		} else {
-			log.Println("Them thanh cong")
-		}
+		return err
+
 	}
+	if ts {
+		return nil
+	}
+	err = engine.Sync2(tb)
+	if err != nil {
+		log.Println(err)
+		return err
+
+	}
+	return nil
 }
 
 //drop
@@ -28,8 +31,8 @@ func DropTable(engine *xorm.Engine, tb interface{}) error {
 	err := engine.DropTables(tb)
 	if err != nil {
 		return err
-	} 
-	return err
+	}
+	return nil
 }
 
 //insert
@@ -38,11 +41,18 @@ func InsertTable(engine *xorm.Engine, tb string, data interface{}) error {
 	if err != nil {
 		return err
 	}
-	return err
+	return nil
 }
 
-func DeleteTable(engine * xorm.Engine, tb interface{}, id string) error {
-	_, err := engine.Where("i_d = ?",id).Delete(tb)
+func DeleteTable(engine *xorm.Engine, tb interface{}, id string) error {
+	_, err := engine.Where("i_d = ?", id).Delete(tb)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+func DeleteTable1(engine *xorm.Engine, tb interface{}, id string) error {
+	_, err := engine.Where("user_id = ?", id).Delete(tb)
 	if err != nil {
 		return err
 	}
@@ -54,21 +64,15 @@ func UpdateTable(engine *xorm.Engine, tb string, data interface{}, id string) er
 	_, err := engine.Table(tb).ID(id).Update(&data)
 	if err != nil {
 		return err
-	} 
-	return err
+	}
+	return nil
 }
 
-//list
-func ListTable(engine *xorm.Engine, tb string) {
-	count, err := engine.Table(tb).Count()
+func UpdateCol(engine * xorm.Engine, tb string, data interface{}, id string) error {
+	_, err := engine.Cols("Birth","Updated_at").Table(tb).ID(id).Update(&data)
 	if err != nil {
-		log.Println(err)
+		return err
 	}
-	has, err := engine.Table(tb).QueryString()
-	if err != nil {
-		panic(err)
-	}
-	for i:= 0; i < int(count); i++ {
-		log.Printf("User%v: %v\n",i,has[i])
-	}
+	return nil
 }
+
