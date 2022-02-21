@@ -67,12 +67,3 @@ func UpdateTable(engine *xorm.Engine, tb string, data interface{}, id string) er
 	}
 	return nil
 }
-
-func UpdateCol(engine * xorm.Engine, tb string, data interface{}, id string) error {
-	_, err := engine.Cols("Birth","Updated_at").Table(tb).ID(id).Update(&data)
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
