@@ -180,14 +180,14 @@ func scantableuser(engine *xorm.Engine) {
 		us := readUser(engine, id)
 		name <- us.Name
 		id1 <- us.ID
-		go worker(i,name, id1)
+		go worker(i, id1, name)
 	}
 	close(name)
 	close(id1)  
 }
 
 func worker(i int,id1 <- chan string, name <- chan string)  {
-	log.Printf("%v - %v - %v", i, <- id1, <-name)
+	fmt.Printf("%v - %v - %v\n", i, <- id1, <-name)
 }
 
 func main(){
@@ -196,7 +196,7 @@ func main(){
 		log.Println(err)
 	}
 	defer engine.Close()
-	engine.ShowSQL(true)
+	// engine.ShowSQL(true)
 	//ex1: 
 
 	// 1. Viết hàm: Chỉ tạo db, và tạo model(struct) ánh xạ struct thành table (CreateTable, Sync2)
@@ -257,6 +257,6 @@ func main(){
 
 	// insert100(engine)
 	// delete100(engine)
-	// scantableuser(engine)
+	scantableuser(engine)
 
 }
